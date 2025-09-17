@@ -1,0 +1,19 @@
+steps:
+  - label: "Checkout code"
+    command: "echo 'Code checkout done'"
+    queue: "arm64"
+
+  - label: "Build & push multi-arch Docker image"
+    commands:
+      - docker buildx create --use
+      - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      - docker buildx build --platform linux/amd64,linux/arm64 -t abhay900/test-x86:latest --push .
+    queue: "arm64"
+
+  - label: "Run microservice test on ARM"
+    commands:
+      - docker run --rm -d -p 5000:5000 abhay900/test-x86:latest
+      - sleep 5
+      - curl http://localhost:5000
+    queue: "arm64"
+
