@@ -4,6 +4,12 @@ steps:
       - docker run --privileged --rm tonistiigi/binfmt --install all
     agents:
       queue: "arm64"
+  - label: "Check Docker env"
+    commands:
+      - echo "DOCKER_USERNAME=${DOCKER_USERNAME}"
+      - echo "DOCKER_PASSWORD is set? $( [ -z "$DOCKER_PASSWORD" ] && echo NO || echo YES )"
+    agents:
+      queue: "arm64"
 
   - label: ":docker: Login"
     commands:
