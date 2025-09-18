@@ -26,4 +26,3 @@ steps:
           -t "$DOCKER_USERNAME/multi-arch-app:latest" --push .
     agents:
       queue: "arm64"
-
