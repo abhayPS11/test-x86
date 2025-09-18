@@ -1,19 +1,23 @@
 steps:
-  - label: "Checkout code"
-    command: "echo 'Code checkout done'"
-    queue: "arm64"
-
-  - label: "Build & push multi-arch Docker image"
+  - label: ":whale: Enable QEMU"
     commands:
-      - docker buildx create --use
-      - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-      - docker buildx build --platform linux/amd64,linux/arm64 -t "$DOCKER_USERNAME/multi-arch-app:latest" --push .
-    queue: "arm64"
+      - docker run --privileged --rm tonistiigi/binfmt --install all
+    agents:
+      queue: "arm64"
 
-  - label: "Run microservice test on ARM"
+  - label: ":docker: Login"
     commands:
-      - docker run --rm -d -p 5000:5000 abhay900/test-x86:latest
-      - sleep 5
-      - curl http://localhost:5000
-    queue: "arm64"
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    agents:
+      queue: "arm64"
+    
+  - label: ":package: Build and Push Multiarch App"
+    commands:
+      - docker buildx rm mybuilder || true
+      - docker buildx create --use --name mybuilder
+      - docker buildx inspect --bootstrap
+      - docker buildx build --platform linux/amd64,linux/arm64 \
+          -t "$DOCKER_USERNAME/multi-arch-app:latest" --push .
+    agents:
+      queue: "arm64"
 
