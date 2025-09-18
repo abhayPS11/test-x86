@@ -2,6 +2,7 @@ steps:
   - label: "Build and Push Multiarch App"
     commands: |
       echo "Checking the build environment..."
+      echo "HOOK_TRIGGER_TEST = $HOOK_TRIGGER_TEST"
       env | grep DOCKER_
       whoami
       echo $DOCKER_USERNAME
