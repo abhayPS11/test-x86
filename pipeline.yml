@@ -9,7 +9,3 @@ steps:
       docker buildx build --platform linux/amd64,linux/arm64 -t $DOCKER_USERNAME/multi-arch-app:latest --push .
     agents:
       queue: arm64
-    env:
-    #  DOCKER_USERNAME: "$DOCKER_USERNAME"
-     # DOCKER_PASSWORD: "$DOCKER_PASSWORD"
-      #DOCKER_CONFIG: "$DOCKER_CONFIG"
