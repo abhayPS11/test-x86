@@ -4,7 +4,6 @@ steps:
       echo "Checking the build environment..."
       env | grep DOCKER_
       whoami
-      echo "Starting multiarch build as buildkite-agent user"
       echo $DOCKER_USERNAME
       # Clean up and set up buildx
       docker buildx rm mybuilder || true
