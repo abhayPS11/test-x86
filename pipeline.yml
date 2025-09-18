@@ -12,7 +12,7 @@ steps:
       docker buildx inspect --bootstrap
 
       # Login and build
-      docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      docker login
       docker buildx build --platform linux/amd64,linux/arm64 \
         -t $DOCKER_USERNAME/multi-arch-app:latest --push .
     agents:
