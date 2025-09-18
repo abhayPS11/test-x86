@@ -1,28 +1,16 @@
 steps:
-  - label: ":whale: Enable QEMU"
-    commands:
-      - docker run --privileged --rm tonistiigi/binfmt --install all
+  - label: "Build and Push Multiarch App"
+    commands: |
+      echo "Starting multiarch build as buildkite-agent user"
+      docker buildx rm mybuilder || true
+      docker buildx create --use --name mybuilder
+      docker buildx inspect --bootstrap
+      docker buildx build --platform linux/amd64,linux/arm64 \
+        -t abhay900/multi-arch-app:latest" \ 
+        --push
     agents:
-      queue: "arm64"
-  - label: "Check Docker env"
-    commands:
-      - echo "DOCKER_USERNAME=${DOCKER_USERNAME}"
-      - echo "DOCKER_PASSWORD is set? $( [ -z "$DOCKER_PASSWORD" ] && echo NO || echo YES )"
-    agents:
-      queue: "arm64"
-
-  - label: ":docker: Login"
-    commands:
-      - echo "$DOCKER_PASSWORD" | docker login -u abhay900 --password-stdin
-    agents:
-      queue: "arm64"
-    
-  - label: ":package: Build and Push Multiarch App"
-    commands:
-      - docker buildx rm mybuilder || true
-      - docker buildx create --use --name mybuilder
-      - docker buildx inspect --bootstrap
-      - docker buildx build --platform linux/amd64,linux/arm64 \
-          -t abhay900/multi-arch-app:latest --push .
-    agents:
-      queue: "arm64"
+      queue: arm64
+    env:
+      DOCKER_USERNAME: "$DOCKER_USERNAME"
+      DOCKER_PASSWORD: "$DOCKER_PASSWORD"
+      DOCKER_CONFIG: "$DOCKER_CONFIG"
